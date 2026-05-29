@@ -1,65 +1,52 @@
-# APEX Coach — AI Training Program Generator
+# IMAT PREP
 
-AI-powered strength training program builder. Input athlete profile → get a full periodized program with sets, reps, percentages, and coaching rationale. Built with FastAPI + Claude API.
+A personal study app for the Italian Medical Admissions Test (IMAT).
 
-## What it does
+## What it is
 
-- Generates complete 12-week training programs for **Squat** and **Bench Press**
-- Supports 5 periodization models: Block, DUP, Wave Loading, Wendler 5/3/1, Modified Conjugate
-- Programs include exact kg, RPE targets, accessories, and phase-by-phase coaching rationale
-- Full Program Builder page generates multi-day weekly splits across all muscle groups
-- CSV export for every generated program
+Single HTML file — no installation, no dependencies. Open in any browser and start studying.
 
-## Tech stack
+Built for someone who wants to get into English-taught medicine in Italy and actually understands what they're studying, not just memorising bullet points.
 
-- **Backend**: Python, FastAPI, Anthropic Claude API (claude-sonnet-4-5)
-- **Frontend**: Vanilla HTML/CSS/JS
-- **AI layer**: Structured prompting with a verified protocol knowledge base — LLM output constrained to evidence-based programming principles
+## What's inside
 
-## Setup
+**Theory** — Condensed IMAT-focused notes for every subject. Covers exactly what the exam tests, nothing more.
 
-```bash
-cd apex-coach
-pip install -r requirements.txt
+**Practice** — AI-generated IMAT-style questions (5 options, one correct). Explains why each wrong answer is wrong. Tracks accuracy per session.
 
-# Set your Anthropic API key (Windows PowerShell)
-$env:ANTHROPIC_API_KEY="your_key_here"
+**Checklist** — Topic-by-topic progress tracker. Saves automatically in the browser.
 
-# Mac/Linux
-export ANTHROPIC_API_KEY=your_key_here
+**Tutor** — AI tutor powered by Claude. Ask anything, request practice questions, get explanations.
 
-cd backend
-uvicorn main:app --reload
-```
+## Subjects covered
 
-Open in browser: http://localhost:8000
-
-## Project structure
-
-```
-apex-coach/
-├── backend/
-│   └── main.py                      # FastAPI — routes, LLM calls, CSV export
-├── frontend/
-│   └── index.html                   # UI — athlete form, program view, full builder
-├── protocols/
-│   ├── squat_powerlifting.json      # Legacy protocol file
-│   └── full_program_database.json  # Volume landmarks, exercise DB, split templates
-└── requirements.txt
-```
-
-## Architecture
-
-- **Protocols separated from code** — knowledge base lives in JSON, not hardcoded in prompts
-- **LLM layer separated from logic** — prompts in `build_system_prompt()` / `build_user_prompt()`, independent of routing
-- **Backend separated from frontend** — can be replaced with React or mobile frontend without touching the API
-
-## Periodization models
-
-| Model | Description |
+| Subject | Questions in exam |
 |---|---|
-| Block | Sequential mesocycles — accumulation → intensification → realization |
-| DUP | Daily Undulating — strength, power, hypertrophy sessions within same week |
-| Wave Loading | Randomized high-variability non-linear — RPE-based autoregulation |
-| Wendler 5/3/1 | Sub-maximal training with AMRAP sets, Training Max = 90% 1RM |
-| Modified Conjugate | Concurrent ME + DE sessions, constant variation to prevent accommodation |
+| Biology | 18 |
+| Chemistry | 12 |
+| Logical Reasoning | 10 |
+| Physics | 8 |
+| Mathematics | 6 |
+| Reading & General Knowledge | 4 |
+
+## How to use
+
+Open `imat_prep.html` in a browser. That's it.
+
+The Practice and Tutor tabs require an internet connection (Claude API). Theory and Checklist work offline.
+
+## Resources
+
+- [Cambridge Assessment — official past papers](https://www.admissionstesting.org/for-test-takers/imat/preparing-for-imat/)
+- [medschool.it — free IMAT resources](https://medschool.it/)
+- [IMAT Buddy — practice questions](https://www.imatbuddy.com/)
+- [Universitaly — official registration](https://www.universitaly.it/)
+
+## Exam facts
+
+- Held every September
+- Registration opens August via Universitaly.it
+- 60 questions · 100 minutes
+- +1.5 correct · −0.4 wrong · 0 blank
+- EU applicants compete in a separate quota
+- 13 public universities available
