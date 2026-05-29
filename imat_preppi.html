@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMAT PREP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#161616;--border:#222;--border2:#2a2a2a;--text:#e0d8cc;--text2:#999;--text3:#555;--gold:#d4a843;--gold2:#b8922d}
+body{font-family:'Georgia',serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+#hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+#hdr-logo{font-size:16px;font-weight:bold;letter-spacing:3px;color:var(--gold)}
+#hdr-sub{font-size:10px;color:var(--text3);letter-spacing:2px;margin-top:2px}
+#hdr-prog{text-align:right}
+#hdr-pct{font-size:20px;font-weight:bold;color:var(--gold)}
+#hdr-pbar{width:110px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:4px}
+#hdr-pfill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+#hdr-plabel{font-size:10px;color:var(--text3);margin-top:2px}
+#layout{display:flex;flex:1;overflow:hidden}
+#sidebar{width:180px;border-right:1px solid var(--border);overflow-y:auto;background:var(--bg2);flex-shrink:0;display:flex;flex-direction:column}
+#sidebar-list{flex:1}
+.sbt{width:100%;text-align:left;padding:11px 14px;border:none;border-left:2px solid transparent;background:transparent;cursor:pointer;transition:all .1s}
+.sbt:hover{background:var(--bg3)}
+.sbt.active{background:var(--bg3);border-left-color:var(--gold)}
+.sbt-name{font-size:12px;font-weight:bold;color:var(--text);margin-bottom:4px;display:flex;justify-content:space-between}
+.sbt-qbadge{font-size:10px;color:var(--gold);font-weight:normal}
+.sbt-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-bottom:3px}
+.sbt-fill{height:100%;border-radius:1px}
+.sbt-cnt{font-size:10px;color:var(--text3)}
+#sidebar-footer{padding:14px;border-top:1px solid var(--border);flex-shrink:0}
+#sidebar-footer a{display:block;font-size:11px;color:var(--gold);padding:3px 0;opacity:.7}
+#sidebar-footer a:hover{opacity:1}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg2)}
+.tab{padding:10px 18px;font-size:12px;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;color:var(--text3);letter-spacing:1px;transition:all .15s;font-family:inherit}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--text);border-bottom-color:var(--gold)}
+#content{flex:1;overflow-y:auto}
+.theory-wrap{padding:24px 28px;max-width:760px}
+.theory-h1{font-size:22px;color:var(--gold);margin-bottom:4px}
+.theory-sub{font-size:12px;color:var(--text3);margin-bottom:24px;letter-spacing:1px}
+.theory-section{margin-bottom:28px}
+.theory-h2{font-size:13px;font-weight:bold;color:var(--text);border-left:2px solid var(--gold);padding-left:10px;margin-bottom:12px;letter-spacing:1px}
+.theory-p{font-size:13px;line-height:1.85;color:var(--text2);margin-bottom:10px}
+.theory-p strong{color:var(--text);font-weight:bold}
+.theory-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:12px}
+.theory-table th{padding:7px 10px;background:var(--bg3);color:var(--gold);text-align:left;border:1px solid var(--border);font-weight:normal;letter-spacing:1px}
+.theory-table td{padding:7px 10px;border:1px solid var(--border);color:var(--text2);vertical-align:top}
+.theory-table tr:hover td{background:var(--bg3)}
+.theory-box{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--gold);padding:12px 16px;border-radius:3px;margin-bottom:14px;font-size:12px;line-height:1.9;color:var(--text2)}
+.theory-box strong{color:var(--gold)}
+.diagram{background:var(--bg3);border:1px solid var(--border);padding:16px;border-radius:3px;margin:12px 0;font-family:monospace;font-size:11px;color:var(--text2);line-height:1.7;overflow-x:auto;white-space:pre}
+.practice-wrap{padding:20px 24px;max-width:700px}
+.pctrl-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.pctrl-btn{padding:8px 16px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-size:12px;cursor:pointer;border-radius:2px;font-family:inherit;transition:all .15s;letter-spacing:1px}
+.pctrl-btn:hover{border-color:var(--gold);color:var(--text)}
+.pctrl-btn.primary{background:var(--gold);color:#000;border-color:var(--gold);font-weight:bold}
+.pctrl-btn.primary:hover{background:var(--gold2)}
+#q-card{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:20px;margin-bottom:16px}
+#q-meta{font-size:10px;color:var(--text3);letter-spacing:2px;margin-bottom:10px;text-transform:uppercase}
+#q-text{font-size:14px;line-height:1.75;color:var(--text);margin-bottom:16px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;margin-bottom:6px;border:1px solid var(--border);border-radius:3px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--text2);user-select:none}
+.opt:hover:not(.locked){border-color:var(--border2);background:var(--bg2)}
+.opt.correct{border-color:#4ade80 !important;background:rgba(74,222,128,.08);color:#4ade80}
+.opt.wrong{border-color:#f87171 !important;background:rgba(248,113,113,.08);color:#f87171}
+.opt.locked{cursor:default}
+.opt-letter{font-weight:bold;min-width:20px;font-size:12px;flex-shrink:0}
+#q-explain{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold);padding:14px 16px;border-radius:3px;font-size:12px;line-height:1.8;color:var(--text2);margin-top:12px}
+#q-explain strong{color:var(--gold)}
+#session-stats{display:flex;gap:24px;padding:12px 0;border-top:1px solid var(--border);margin-top:4px;margin-bottom:16px}
+.stat-num{font-size:22px;font-weight:bold}
+.stat-lbl{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:1px}
+#q-loading{padding:30px;text-align:center;color:var(--text3);font-size:13px}
+.check-wrap{padding:16px 20px;max-width:700px}
+.topic-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;margin-bottom:3px;border:1px solid var(--border);border-radius:3px;cursor:pointer;transition:background .1s;user-select:none}
+.topic-row:hover{background:var(--bg3)}
+.topic-row.done{opacity:.4}
+.cbox{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:2px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:11px;font-weight:bold;color:#000}
+.cbox.checked{background:var(--gold);border-color:var(--gold)}
+.topic-txt{font-size:12px;line-height:1.6;color:var(--text)}
+.topic-row.done .topic-txt{text-decoration:line-through;color:var(--text3)}
+.tutor-wrap{display:flex;flex-direction:column;height:100%;padding:16px 20px}
+#msgs{flex:1;overflow-y:auto;padding-bottom:10px}
+.msg{margin-bottom:12px;display:flex}
+.msg.user{justify-content:flex-end}
+.bubble{max-width:78%;padding:10px 14px;border-radius:3px;font-size:12px;line-height:1.7;white-space:pre-wrap}
+.msg.assistant .bubble{background:var(--bg3);border:1px solid var(--border);color:var(--text2)}
+.msg.user .bubble{background:#1a1a30;border:1px solid #2a2a50;color:#a0a8e0}
+#msg-input-row{display:flex;gap:8px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--border)}
+#msg-input{flex:1;padding:9px 14px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-size:12px;border-radius:2px;font-family:inherit;outline:none}
+#msg-input:focus{border-color:var(--gold)}
+#msg-send{padding:9px 20px;background:var(--gold);border:none;color:#000;font-size:12px;font-weight:bold;cursor:pointer;border-radius:2px;font-family:inherit;letter-spacing:1px}
+#msg-send:hover{background:var(--gold2)}
+#msg-send:disabled{opacity:.4;cursor:not-allowed}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div>
+    <div id="hdr-logo">IMAT PREP</div>
+    <div id="hdr-sub">ITALIAN MEDICAL ADMISSIONS</div>
+  </div>
+  <div id="hdr-prog">
+    <div id="hdr-pct">0%</div>
+    <div id="hdr-pbar"><div id="hdr-pfill" style="width:0%"></div></div>
+    <div id="hdr-plabel">0 / 0 topics</div>
+  </div>
+</div>
+
+<div id="layout">
+  <div id="sidebar">
+    <div id="sidebar-list"></div>
+    <div id="sidebar-footer">
+      <div style="font-size:10px;color:var(--text3);letter-spacing:2px;margin-bottom:8px;">PAST PAPERS</div>
+      <a href="https://www.admissionstesting.org/for-test-takers/imat/preparing-for-imat/" target="_blank">Cambridge (official) →</a>
+      <a href="https://medschool.it/" target="_blank">medschool.it →</a>
+      <a href="https://www.imatbuddy.com/" target="_blank">IMAT Buddy →</a>
+      <a href="https://www.universitaly.it/" target="_blank">Universitaly (reg.) →</a>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="tabs">
+      <button class="tab active" onclick="setTab('theory')">THEORY</button>
+      <button class="tab" onclick="setTab('practice')">PRACTICE</button>
+      <button class="tab" onclick="setTab('checklist')">CHECKLIST</button>
+      <button class="tab" onclick="setTab('tutor')">TUTOR</button>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<script>
+const SUBJECTS = [
+{
+  id:"bio", name:"Biology", q:18, color:"#4ade80",
+  topics:[
+    "Cell structure: prokaryotic vs eukaryotic, organelles and functions",
+    "Mitosis (PMAT phases) and meiosis I & II, crossing over",
+    "DNA structure, replication, transcription, translation (central dogma)",
+    "Mendelian genetics: dominance, Punnett squares, sex-linked traits",
+    "Digestive system: enzymes, absorption, organs",
+    "Circulatory system: heart anatomy, blood vessels, blood types",
+    "Nervous system: neurons, action potential, CNS vs PNS",
+    "Respiratory system: gas exchange, lung mechanics",
+    "Endocrine system: hormones and their functions",
+    "Reproductive system: spermatogenesis, oogenesis",
+    "Aerobic respiration: glycolysis, Krebs cycle, electron transport chain",
+    "Photosynthesis: light reactions and Calvin cycle",
+    "Immune system: innate vs adaptive immunity, antibodies",
+    "Ecology: food chains, energy flow, nutrient cycles",
+    "Evolution: natural selection, Hardy-Weinberg, speciation",
+    "Molecular biology: gene expression regulation, PCR basics"
+  ],
+  theory:`<div class="theory-wrap">
+<div class="theory-h1">🧬 Biology</div>
+<div class="theory-sub">18 QUESTIONS · HIGHEST WEIGHT SUBJECT</div>
+
+<div class="theory-section">
+<div class="theory-h2">CELL BIOLOGY</div>
+<div class="theory-p"><strong>Prokaryotes vs Eukaryotes:</strong><br>
+Prokaryotes (bacteria): no nucleus, no membrane-bound organelles, circular DNA, smaller ribosomes (70S).<br>
+Eukaryotes (animal, plant, fungi): nucleus, membrane-bound organelles, linear DNA, 80S ribosomes.</div>
+<table class="theory-table">
+<tr><th>Organelle</th><th>Function</th><th>Key fact</th></tr>
+<tr><td>Nucleus</td><td>DNA storage, transcription</td><td>Nuclear envelope, contains nucleolus</td></tr>
+<tr><td>Mitochondria</td><td>ATP production (aerobic respiration)</td><td>Own DNA, double membrane</td></tr>
+<tr><td>Ribosome</td><td>Protein synthesis</td><td>On rER or free in cytoplasm</td></tr>
+<tr><td>Rough ER</td><td>Protein synthesis + processing</td><td>Ribosomes on surface</td></tr>
+<tr><td>Smooth ER</td><td>Lipid synthesis, detoxification</td><td>No ribosomes</td></tr>
+<tr><td>Golgi apparatus</td><td>Protein modification + packaging</td><td>"Post office" of the cell</td></tr>
+<tr><td>Lysosome</td><td>Intracellular digestion</td><td>Acidic hydrolase enzymes</td></tr>
+<tr><td>Chloroplast</td><td>Photosynthesis</td><td>Plants only, own DNA, thylakoids</td></tr>
+<tr><td>Cell membrane</td><td>Transport, communication</td><td>Phospholipid bilayer + proteins</td></tr>
+</table>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">CELL DIVISION</div>
+<div class="theory-p"><strong>Mitosis</strong> — somatic cell division → 2 diploid (2n) daughter cells:</div>
+<div class="diagram">Prophase → Metaphase → Anaphase → Telophase
+Prophase:   Chromatin condenses, nuclear envelope breaks down
+Metaphase:  Chromosomes align at metaphase plate ← MOST TESTABLE STAGE
+Anaphase:   Sister chromatids separate, pulled to poles
+Telophase:  Nuclear envelopes reform, cytokinesis divides cell</div>
+<div class="theory-p"><strong>Meiosis</strong> — gamete formation → 4 haploid (n) cells:<br>
+Meiosis I: homologous chromosome pairs separate (crossing over in Prophase I!)<br>
+Meiosis II: sister chromatid separation (like mitosis)</div>
+<div class="theory-box"><strong>Crossing over (recombination):</strong> Homologous chromosomes exchange segments during Prophase I → increases genetic diversity. Result: recombinant chromosomes with new allele combinations.</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">MOLECULAR BIOLOGY — CENTRAL DOGMA</div>
+<div class="theory-p"><strong>DNA structure:</strong> Double helix, antiparallel strands (5'→3' and 3'→5'), base pairs: A-T (2 H-bonds), G-C (3 H-bonds)</div>
+<div class="theory-box"><strong>Central Dogma:</strong><br>
+DNA → (replication) → DNA<br>
+DNA → (transcription) → mRNA → (translation) → Protein<br><br>
+<strong>Replication:</strong> Semi-conservative. DNA polymerase adds nucleotides 5'→3' only. Leading strand continuous; lagging strand in Okazaki fragments.<br>
+<strong>Transcription:</strong> RNA polymerase synthesises mRNA from DNA template. Occurs in nucleus.<br>
+<strong>Translation:</strong> Ribosomes read mRNA codons (3 bases = 1 amino acid). tRNA delivers amino acids. Start codon: AUG (methionine). Stop codons: UAA, UAG, UGA.</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">GENETICS</div>
+<div class="theory-p"><strong>Mendel's Laws:</strong><br>
+1. Law of Segregation: alleles separate during gamete formation<br>
+2. Law of Independent Assortment: genes on different chromosomes sort independently</div>
+<div class="theory-box">
+<strong>Punnett square — Aa × Aa:</strong> genotypic ratio 1:2:1 (AA:Aa:aa) → phenotypic ratio 3:1<br>
+<strong>Testcross:</strong> Cross unknown genotype with homozygous recessive (aa) to determine genotype.<br>
+<strong>Sex-linked traits:</strong> Gene on X chromosome. Males (XY) express recessive alleles since no second X. Examples: colour blindness, haemophilia.
+</div>
+<div class="theory-p"><strong>Codominance:</strong> Both alleles expressed equally (e.g. ABO blood type AB shows both A and B antigens)<br>
+<strong>Incomplete dominance:</strong> Heterozygote shows intermediate phenotype (e.g. red × white → pink)</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">HUMAN PHYSIOLOGY</div>
+<div class="theory-p"><strong>Circulatory system:</strong><br>
+Left side → systemic circulation (oxygenated). Right side → pulmonary circulation (deoxygenated).<br>
+Path: left ventricle → aorta → capillaries → venae cavae → right atrium → right ventricle → pulmonary artery → lungs → pulmonary veins → left atrium</div>
+<div class="theory-p"><strong>Nervous system:</strong><br>
+Neuron: dendrites (signal in) → cell body → axon → synaptic terminals<br>
+Action potential: Na⁺ rushes in (depolarisation), K⁺ rushes out (repolarisation), Na⁺/K⁺ ATPase restores balance<br>
+Synapse: neurotransmitter (e.g. acetylcholine) crosses synaptic cleft → binds receptor</div>
+<div class="theory-p"><strong>Respiratory system:</strong><br>
+Gas exchange in alveoli: O₂ diffuses into blood, CO₂ diffuses out. Haemoglobin carries O₂ (4 molecules per Hb).<br>
+Breathing: diaphragm contracts → chest volume ↑ → pressure ↓ → air flows in (inspiration)</div>
+<div class="theory-p"><strong>Digestive system:</strong><br>
+Mouth (salivary amylase → starch) → oesophagus → stomach (pepsin, HCl, pH ~2, protein digestion) → small intestine (lipase, amylase, proteases; absorption via villi) → large intestine (water absorption)</div>
+<table class="theory-table">
+<tr><th>Hormone</th><th>Gland</th><th>Function</th></tr>
+<tr><td>Insulin</td><td>Pancreas (β-cells)</td><td>Lowers blood glucose</td></tr>
+<tr><td>Glucagon</td><td>Pancreas (α-cells)</td><td>Raises blood glucose</td></tr>
+<tr><td>Adrenaline (epinephrine)</td><td>Adrenal medulla</td><td>Fight-or-flight response</td></tr>
+<tr><td>Thyroxine (T4)</td><td>Thyroid</td><td>Regulates metabolism</td></tr>
+<tr><td>Growth hormone (GH)</td><td>Anterior pituitary</td><td>Growth, metabolism</td></tr>
+<tr><td>Cortisol</td><td>Adrenal cortex</td><td>Stress response, anti-inflammatory</td></tr>
+<tr><td>Oestrogen / Testosterone</td><td>Ovaries / Testes</td><td>Sexual development, reproduction</td></tr>
+</table>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">CELLULAR RESPIRATION</div>
+<div class="theory-box"><strong>Overall aerobic equation:</strong><br>
+C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ~36–38 ATP</div>
+<div class="theory-p">
+<strong>1. Glycolysis</strong> (cytoplasm): Glucose → 2× pyruvate. Net yield: 2 ATP, 2 NADH<br>
+<strong>2. Pyruvate oxidation</strong>: Pyruvate → acetyl-CoA + CO₂ + NADH (in mitochondrial matrix)<br>
+<strong>3. Krebs cycle</strong> (mitochondrial matrix): 2 turns per glucose. Produces: 6 NADH, 2 FADH₂, 2 ATP, 4 CO₂<br>
+<strong>4. Electron transport chain</strong> (inner mitochondrial membrane): NADH and FADH₂ donate electrons → ~32–34 ATP via oxidative phosphorylation. O₂ = final electron acceptor → H₂O formed
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">PHOTOSYNTHESIS</div>
+<div class="theory-box">6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂</div>
+<div class="theory-p">
+<strong>Light-dependent reactions</strong> (thylakoid membranes): Light excites chlorophyll. H₂O is split → O₂ released (photolysis). ATP and NADPH produced.<br>
+<strong>Calvin cycle / Light-independent reactions</strong> (stroma): CO₂ fixed by RuBisCO. ATP + NADPH used to synthesise G3P → glucose.
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">IMMUNE SYSTEM</div>
+<div class="theory-p"><strong>Innate immunity:</strong> Fast, non-specific. Phagocytes (neutrophils, macrophages), inflammation, fever, natural killer cells.<br>
+<strong>Adaptive immunity:</strong> Slow (days), specific. B-cells → antibodies. Helper T-cells (CD4+) activate B-cells and cytotoxic T-cells. Cytotoxic T-cells (CD8+) kill infected cells. Memory cells → rapid secondary response.</div>
+<div class="theory-box"><strong>Antibody structure:</strong> Y-shaped, 4 polypeptide chains. Variable region = antigen-binding site. Each antibody is specific to one antigen.<br>
+<strong>Vaccines:</strong> Expose immune system to antigen (attenuated pathogen, protein, mRNA) → memory cells formed without disease.</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">EVOLUTION & ECOLOGY</div>
+<div class="theory-p"><strong>Natural selection:</strong> Heritable variation exists. Individuals with advantageous traits survive and reproduce more → allele frequency changes over generations.<br>
+<strong>Hardy-Weinberg equilibrium:</strong> p² + 2pq + q² = 1, p + q = 1.<br>
+Allele frequencies stay constant if: no mutation, no selection, large population, random mating, no migration.<br>
+<strong>Speciation:</strong> Allopatric (geographic isolation) vs sympatric (same location, e.g. polyploidy in plants)</div>
+<div class="theory-p"><strong>Ecology:</strong> Producer → Primary consumer → Secondary consumer → Tertiary consumer<br>
+~10% energy transferred between trophic levels. Remainder lost as heat.<br>
+Nitrogen cycle: fixation (bacteria) → nitrification → denitrification</div>
+</div>
+</div>`
+},
+{
+  id:"chem", name:"Chemistry", q:12, color:"#fb923c",
+  topics:[
+    "Atomic structure: electron configuration, quantum numbers",
+    "Periodic table trends: atomic radius, electronegativity, ionisation energy",
+    "Chemical bonding: ionic, covalent, polar, hydrogen bonds, Van der Waals",
+    "Stoichiometry: molar mass, balancing equations, limiting reagent, yield",
+    "Acids and bases: Brønsted-Lowry, pH calculations, buffers",
+    "Thermodynamics: enthalpy, entropy, Gibbs free energy, Hess's law",
+    "Reaction kinetics: rate laws, activation energy, catalysts",
+    "Equilibrium: Le Chatelier's principle, Kc and Kp",
+    "Electrochemistry: oxidation/reduction, redox reactions, galvanic cells",
+    "Organic functional groups: alkanes, alkenes, alcohols, ketones, carboxylic acids, amines",
+    "Organic reactions: substitution, addition, elimination, esterification",
+    "Biochemical molecules: carbohydrates, lipids, proteins, nucleic acids"
+  ],
+  theory:`<div class="theory-wrap">
+<div class="theory-h1">⚗️ Chemistry</div>
+<div class="theory-sub">12 QUESTIONS</div>
+
+<div class="theory-section">
+<div class="theory-h2">ATOMIC STRUCTURE</div>
+<div class="theory-p">Atom: protons (p⁺) + neutrons (n⁰) in nucleus, electrons (e⁻) in orbitals.<br>
+<strong>Mass number</strong> = p + n. <strong>Atomic number (Z)</strong> = p (= e in neutral atom).<br>
+<strong>Isotopes:</strong> same Z, different mass number (e.g. ¹²C and ¹⁴C)</div>
+<div class="theory-box">
+<strong>Electron configuration (Aufbau principle):</strong> Fill lowest energy first.<br>
+Order: 1s 2s 2p 3s 3p 4s 3d 4p 5s 4d 5p...<br>
+Na (Z=11): 1s² 2s² 2p⁶ 3s¹<br>
+<strong>Hund's rule:</strong> One electron in each orbital before pairing.<br>
+<strong>Pauli exclusion:</strong> Max 2 electrons per orbital, opposite spins.
+</div>
+<div class="theory-box">
+<strong>Periodic trends left → right:</strong><br>
+Atomic radius ↓ | Ionisation energy ↑ | Electronegativity ↑<br>
+<strong>Top → bottom:</strong><br>
+Atomic radius ↑ | Ionisation energy ↓ | Electronegativity ↓
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">CHEMICAL BONDING</div>
+<table class="theory-table">
+<tr><th>Bond type</th><th>Formed between</th><th>Key property</th></tr>
+<tr><td>Ionic</td><td>Metal + non-metal</td><td>High mp/bp, conducts when molten/dissolved</td></tr>
+<tr><td>Covalent</td><td>Non-metals</td><td>Shared electron pairs</td></tr>
+<tr><td>Polar covalent</td><td>Different electronegativities</td><td>Dipole moment, partial charges δ+/δ−</td></tr>
+<tr><td>Metallic</td><td>Metals</td><td>Delocalised electrons, conducts electricity</td></tr>
+<tr><td>Hydrogen bond</td><td>N-H, O-H, F-H</td><td>Explains water's high bp, DNA base pairing</td></tr>
+<tr><td>Van der Waals</td><td>All molecules</td><td>Weak, increases with molar mass</td></tr>
+</table>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">STOICHIOMETRY</div>
+<div class="theory-box">
+1 mole = 6.022 × 10²³ particles (Avogadro's number)<br>
+n = m / M (moles = mass / molar mass)<br>
+c = n / V (concentration = moles / litres)<br>
+PV = nRT (ideal gas law)<br>
+Percentage yield = (actual yield / theoretical yield) × 100%
+</div>
+<div class="theory-p"><strong>Limiting reagent:</strong> The reactant that runs out first and determines the maximum product. Find moles of each reactant, compare to stoichiometric ratio.</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">ACIDS AND BASES</div>
+<div class="theory-p"><strong>Brønsted-Lowry:</strong> Acid = proton (H⁺) donor. Base = proton acceptor.<br>
+<strong>Lewis:</strong> Acid = electron pair acceptor. Base = electron pair donor.</div>
+<div class="theory-box">
+pH = −log[H⁺]<br>
+pH 7 = neutral, &lt;7 = acidic, &gt;7 = basic, at 25°C<br>
+pH + pOH = 14<br>
+<strong>Strong acids</strong> (fully dissociate): HCl, HNO₃, H₂SO₄, HBr, HI, HClO₄<br>
+<strong>Weak acids</strong> (partial dissociation): CH₃COOH, H₂CO₃, HF<br>
+<strong>Buffer:</strong> Weak acid + its conjugate base. Resists pH changes.<br>
+Blood buffer: H₂CO₃ / HCO₃⁻ maintains pH ≈ 7.4
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">THERMODYNAMICS & EQUILIBRIUM</div>
+<div class="theory-box">
+ΔG = ΔH − TΔS<br>
+ΔG &lt; 0 → spontaneous reaction<br>
+ΔH &lt; 0 → exothermic (energy released)<br>
+ΔH &gt; 0 → endothermic (energy absorbed)<br>
+ΔS &gt; 0 → entropy increases (more disorder)<br><br>
+Hess's Law: ΔH of reaction = sum of ΔH of individual steps (path-independent)
+</div>
+<div class="theory-p"><strong>Le Chatelier's principle:</strong> If a system at equilibrium is disturbed, it shifts to oppose the change.<br>
+Add reactant → shifts right (more product)<br>
+Increase pressure → shifts toward fewer moles of gas<br>
+Increase temperature → shifts toward endothermic direction</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">REACTION KINETICS & ELECTROCHEMISTRY</div>
+<div class="theory-box">
+Rate = k[A]ⁿ[B]ᵐ<br>
+Activation energy (Eₐ): minimum energy needed. Catalyst lowers Eₐ, increases rate.<br>
+Arrhenius equation: k = Ae^(−Eₐ/RT)<br><br>
+<strong>Redox:</strong> Oxidation = loss of electrons (OIL). Reduction = gain of electrons (RIG).<br>
+Oxidation state rules: O usually −2, H usually +1, sum = charge of species.<br>
+<strong>Galvanic cell:</strong> Spontaneous redox → electrical energy. Anode = oxidation, Cathode = reduction.
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">ORGANIC CHEMISTRY</div>
+<table class="theory-table">
+<tr><th>Functional group</th><th>Structure</th><th>Example</th><th>Reaction</th></tr>
+<tr><td>Alkane</td><td>C−C single bonds</td><td>Methane CH₄</td><td>Combustion, substitution</td></tr>
+<tr><td>Alkene</td><td>C=C double bond</td><td>Ethene CH₂=CH₂</td><td>Addition (electrophilic)</td></tr>
+<tr><td>Alkyne</td><td>C≡C triple bond</td><td>Ethyne C₂H₂</td><td>Addition</td></tr>
+<tr><td>Alcohol</td><td>−OH</td><td>Ethanol</td><td>Oxidation, esterification</td></tr>
+<tr><td>Aldehyde</td><td>−CHO</td><td>Methanal</td><td>Oxidation to carboxylic acid</td></tr>
+<tr><td>Ketone</td><td>C=O (internal)</td><td>Propanone</td><td>Resistant to oxidation</td></tr>
+<tr><td>Carboxylic acid</td><td>−COOH</td><td>Ethanoic acid</td><td>Esterification, neutralisation</td></tr>
+<tr><td>Amine</td><td>−NH₂</td><td>Methylamine</td><td>Acts as base</td></tr>
+<tr><td>Ester</td><td>−COO−</td><td>Ethyl ethanoate</td><td>Hydrolysis</td></tr>
+</table>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">BIOCHEMICAL MOLECULES</div>
+<table class="theory-table">
+<tr><th>Molecule</th><th>Monomer</th><th>Bond</th><th>Function</th></tr>
+<tr><td>Carbohydrates</td><td>Monosaccharides (glucose)</td><td>Glycosidic bond</td><td>Energy (starch, glycogen), structure (cellulose)</td></tr>
+<tr><td>Lipids (fats)</td><td>Glycerol + fatty acids</td><td>Ester bond</td><td>Energy storage, membranes (phospholipids), hormones (steroids)</td></tr>
+<tr><td>Proteins</td><td>Amino acids (20 types)</td><td>Peptide bond</td><td>Enzymes, structure, transport, antibodies</td></tr>
+<tr><td>Nucleic acids</td><td>Nucleotides</td><td>Phosphodiester bond</td><td>Genetic information (DNA), protein synthesis (RNA)</td></tr>
+</table>
+<div class="theory-p"><strong>Protein structure levels:</strong><br>
+Primary: amino acid sequence. Secondary: α-helix, β-sheet (H-bonds). Tertiary: 3D folding (disulfide bridges, H-bonds, hydrophobic). Quaternary: multiple polypeptide subunits.</div>
+</div>
+</div>`
+},
+{
+  id:"phys", name:"Physics", q:8, color:"#60a5fa",
+  topics:[
+    "Kinematics: displacement, velocity, acceleration, projectile motion",
+    "Newton's laws: inertia, F=ma, action-reaction, friction",
+    "Energy: kinetic, potential, conservation of energy, work, power",
+    "Momentum: conservation, elastic vs inelastic collisions, impulse",
+    "Fluid mechanics: pressure, Pascal, Archimedes, Bernoulli",
+    "Thermodynamics: heat transfer, ideal gas law, laws of thermodynamics",
+    "Waves: frequency, wavelength, amplitude, types",
+    "Optics: reflection, refraction, Snell's law, lenses",
+    "Electricity: Ohm's law, series/parallel circuits, capacitors",
+    "Electromagnetism: magnetic fields, Faraday's law"
+  ],
+  theory:`<div class="theory-wrap">
+<div class="theory-h1">⚡ Physics</div>
+<div class="theory-sub">8 QUESTIONS</div>
+
+<div class="theory-section">
+<div class="theory-h2">KINEMATICS</div>
+<div class="theory-box">
+v = v₀ + at<br>
+x = x₀ + v₀t + ½at²<br>
+v² = v₀² + 2a(x − x₀)<br>
+Free fall: a = g ≈ 9.8 m/s² downward<br>
+Average velocity: v̄ = Δx / Δt
+</div>
+<div class="theory-p"><strong>Projectile motion:</strong> Horizontal and vertical components are independent.<br>
+Horizontal: constant velocity (no acceleration if no air resistance)<br>
+Vertical: free fall (a = g downward)<br>
+At max height: vertical velocity = 0</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">NEWTON'S LAWS & ENERGY</div>
+<div class="theory-p">
+<strong>1st law (Inertia):</strong> An object stays at rest or uniform motion unless a net force acts on it.<br>
+<strong>2nd law:</strong> F = ma (net force = mass × acceleration)<br>
+<strong>3rd law:</strong> For every action there is an equal and opposite reaction.</div>
+<div class="theory-box">
+Kinetic energy: Eₖ = ½mv²<br>
+Gravitational potential energy: Eₚ = mgh<br>
+Work: W = Fd·cosθ<br>
+Power: P = W/t = Fv<br>
+Conservation of energy: Eₖ₁ + Eₚ₁ = Eₖ₂ + Eₚ₂ (no friction)<br>
+Momentum: p = mv<br>
+Impulse: J = Δp = FΔt<br>
+Conservation of momentum: m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂'
+</div>
+<div class="theory-p"><strong>Elastic collision:</strong> Both momentum AND kinetic energy conserved.<br>
+<strong>Perfectly inelastic:</strong> Momentum conserved, objects stick together, KE not conserved.</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">FLUID MECHANICS</div>
+<div class="theory-box">
+Pressure: P = F/A (Pa = N/m²)<br>
+Pascal's law: P = P₀ + ρgh (pressure increases with depth)<br>
+Archimedes' principle: buoyant force = weight of fluid displaced<br>
+Object floats if ρ_object &lt; ρ_fluid<br>
+Bernoulli's equation: P + ½ρv² + ρgh = constant<br>
+→ Faster flow = lower pressure (explains lift on aeroplane wings!)<br>
+Continuity equation: A₁v₁ = A₂v₂ (narrower tube → faster flow)
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">THERMODYNAMICS</div>
+<div class="theory-box">
+Ideal gas law: PV = nRT (P=pressure, V=volume, n=moles, R=8.314 J/mol·K, T=Kelvin)<br>
+1st law: ΔU = Q − W (change in internal energy = heat added − work done by system)<br>
+2nd law: Entropy of an isolated system always increases (disorder increases)<br>
+Heat transfer: conduction (contact), convection (fluid flow), radiation (electromagnetic waves)
+</div>
+<div class="theory-p">Temperature conversions: K = °C + 273.15. All gas law calculations must use Kelvin!</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">WAVES & OPTICS</div>
+<div class="theory-box">
+Wave equation: v = fλ (speed = frequency × wavelength)<br>
+Period: T = 1/f<br>
+<strong>Law of reflection:</strong> angle of incidence = angle of reflection (θᵢ = θᵣ)<br>
+<strong>Snell's law:</strong> n₁sinθ₁ = n₂sinθ₂<br>
+Speed of light in vacuum: c ≈ 3×10⁸ m/s<br>
+Refractive index: n = c/v
+</div>
+<div class="theory-p"><strong>Lenses:</strong> Converging (convex) focuses light → real image. Diverging (concave) spreads light → virtual image.<br>
+Lens equation: 1/f = 1/dₒ + 1/dᵢ<br>
+<strong>Total internal reflection:</strong> Light going from denser → less dense medium exceeds critical angle → all light reflected (optical fibre principle)</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">ELECTRICITY & ELECTROMAGNETISM</div>
+<div class="theory-box">
+Ohm's law: V = IR (voltage = current × resistance)<br>
+Power: P = VI = I²R = V²/R<br>
+Series: R_total = R₁ + R₂ + ... (same current, voltages add)<br>
+Parallel: 1/R_total = 1/R₁ + 1/R₂ + ... (same voltage, currents add)<br>
+Capacitors in parallel: C_total = C₁ + C₂ (opposite to resistors)<br>
+Coulomb's law: F = kq₁q₂/r²<br>
+Faraday's law: changing magnetic flux → induced EMF = −ΔΦ/Δt
+</div>
+</div>
+</div>`
+},
+{
+  id:"math", name:"Mathematics", q:6, color:"#c084fc",
+  topics:[
+    "Algebra: linear/quadratic equations, inequalities, systems",
+    "Functions: domain, range, composite and inverse functions",
+    "Exponentials and logarithms: rules, solving equations",
+    "Trigonometry: unit circle, identities, solving equations",
+    "Sequences: arithmetic, geometric, sum formulas",
+    "Calculus: derivatives, basic integrals, limits",
+    "Statistics: mean, median, mode, variance, standard deviation",
+    "Probability: basic rules, combinations, permutations, conditional"
+  ],
+  theory:`<div class="theory-wrap">
+<div class="theory-h1">📐 Mathematics</div>
+<div class="theory-sub">6 QUESTIONS</div>
+
+<div class="theory-section">
+<div class="theory-h2">ALGEBRA</div>
+<div class="theory-box">
+Quadratic formula: x = (−b ± √(b²−4ac)) / 2a<br>
+Discriminant Δ = b²−4ac:<br>
+  Δ &gt; 0: two real solutions | Δ = 0: one solution | Δ &lt; 0: no real solutions<br><br>
+Key factorisations:<br>
+a² − b² = (a+b)(a−b)<br>
+a² + 2ab + b² = (a+b)²<br>
+a³ − b³ = (a−b)(a² + ab + b²)
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">LOGARITHMS & EXPONENTIALS</div>
+<div class="theory-box">
+log_a(xy) = log_a(x) + log_a(y)<br>
+log_a(x/y) = log_a(x) − log_a(y)<br>
+log_a(xⁿ) = n·log_a(x)<br>
+log_a(a) = 1 &nbsp;&nbsp;&nbsp; log_a(1) = 0<br>
+Change of base: log_a(x) = ln(x)/ln(a)<br>
+ln = log_e (natural log, e ≈ 2.718)<br>
+eˡⁿˣ = x &nbsp;&nbsp;&nbsp; ln(eˣ) = x
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">TRIGONOMETRY</div>
+<div class="theory-box">
+sin²θ + cos²θ = 1<br>
+tan θ = sin θ / cos θ<br>
+sin(2θ) = 2sinθcosθ<br>
+cos(2θ) = cos²θ − sin²θ<br><br>
+Key values:<br>
+sin 0° = 0, cos 0° = 1<br>
+sin 30° = 0.5, cos 30° = √3/2 ≈ 0.866<br>
+sin 45° = cos 45° = √2/2 ≈ 0.707<br>
+sin 60° = √3/2, cos 60° = 0.5<br>
+sin 90° = 1, cos 90° = 0
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">CALCULUS</div>
+<div class="theory-box">
+d/dx [xⁿ] = nxⁿ⁻¹ &nbsp;&nbsp; d/dx [eˣ] = eˣ &nbsp;&nbsp; d/dx [ln x] = 1/x<br>
+d/dx [sin x] = cos x &nbsp;&nbsp; d/dx [cos x] = −sin x<br>
+Product rule: (uv)' = u'v + uv'<br>
+Chain rule: d/dx[f(g(x))] = f'(g(x))·g'(x)<br>
+Quotient rule: (u/v)' = (u'v − uv') / v²<br><br>
+∫xⁿ dx = xⁿ⁺¹/(n+1) + C &nbsp;&nbsp; ∫eˣ dx = eˣ + C &nbsp;&nbsp; ∫(1/x) dx = ln|x| + C
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">STATISTICS & PROBABILITY</div>
+<div class="theory-box">
+Mean = Σx / n<br>
+Variance = Σ(x − mean)² / n<br>
+Standard deviation = √Variance<br><br>
+Combination (order doesn't matter): C(n,k) = n! / (k!(n−k)!)<br>
+Permutation (order matters): P(n,k) = n! / (n−k)!<br>
+P(A or B) = P(A) + P(B) − P(A and B)<br>
+P(A and B) = P(A) × P(B) if independent<br>
+Conditional: P(A|B) = P(A and B) / P(B)
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">SEQUENCES & SERIES</div>
+<div class="theory-box">
+Arithmetic sequence: aₙ = a₁ + (n−1)d<br>
+Arithmetic series: Sₙ = n(a₁ + aₙ)/2<br>
+Geometric sequence: aₙ = a₁·rⁿ⁻¹<br>
+Geometric series (finite): Sₙ = a₁(1−rⁿ)/(1−r)<br>
+Infinite geometric series (|r| &lt; 1): S∞ = a₁/(1−r)
+</div>
+</div>
+</div>`
+},
+{
+  id:"logic", name:"Logical Reasoning", q:10, color:"#f472b6",
+  topics:[
+    "Argument structure: identifying premises and conclusion",
+    "Deductive reasoning: syllogisms, validity vs soundness",
+    "Identifying assumptions in arguments",
+    "Strengthening and weakening arguments",
+    "Identifying logical flaws",
+    "Data interpretation: graphs, tables, statistics",
+    "Pattern recognition: number, letter, shape sequences",
+    "Problem solving: numerical and verbal puzzles",
+    "Conditional reasoning: if-then logic, contrapositive"
+  ],
+  theory:`<div class="theory-wrap">
+<div class="theory-h1">🧩 Logical Reasoning & Problem Solving</div>
+<div class="theory-sub">10 QUESTIONS · IMPROVABLE WITH PRACTICE</div>
+
+<div class="theory-section">
+<div class="theory-h2">ARGUMENT STRUCTURE</div>
+<div class="theory-p">Every IMAT logic question has <strong>premises</strong> (statements taken as true) and a <strong>conclusion</strong> (what follows from them). Your job is always to identify what role each statement plays.</div>
+<div class="theory-box">
+<strong>Conclusion signal words:</strong> therefore, thus, hence, so, consequently, it follows that, this shows that<br>
+<strong>Premise signal words:</strong> because, since, given that, as, for, due to the fact that<br><br>
+<strong>Tip:</strong> Read the conclusion first, then identify what premises support it.
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">QUESTION TYPES & STRATEGIES</div>
+<table class="theory-table">
+<tr><th>Question type</th><th>Recognise it by</th><th>Strategy</th></tr>
+<tr><td>Assumption</td><td>"Which assumption underlies...?"</td><td>Negation test: if negating an answer destroys the argument, it's the assumption</td></tr>
+<tr><td>Strengthen</td><td>"Which best supports the argument?"</td><td>Find the option that makes the conclusion more likely to be true</td></tr>
+<tr><td>Weaken</td><td>"Which undermines the argument?"</td><td>Find the option that makes the conclusion less likely to be true</td></tr>
+<tr><td>Flaw</td><td>"What is the flaw in the reasoning?"</td><td>Identify the logical leap or unwarranted assumption</td></tr>
+<tr><td>Inference</td><td>"What can be concluded?"</td><td>Only what MUST be true, not just probably true</td></tr>
+<tr><td>Parallel reasoning</td><td>"Which argument has the same structure?"</td><td>Identify the logical form, ignore the content</td></tr>
+</table>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">COMMON LOGICAL FALLACIES</div>
+<div class="theory-box">
+<strong>Ad hominem:</strong> Attacking the person instead of the argument<br>
+<strong>Straw man:</strong> Misrepresenting a position to make it easier to attack<br>
+<strong>Correlation ≠ causation:</strong> Two things occurring together doesn't mean one causes the other<br>
+<strong>Circular reasoning:</strong> Conclusion is restated as a premise<br>
+<strong>False dichotomy:</strong> Presenting only two options when more exist<br>
+<strong>Hasty generalisation:</strong> Drawing broad conclusions from too small a sample<br>
+<strong>Appeal to authority:</strong> Something is true because an expert says so (without evidence)<br>
+<strong>Slippery slope:</strong> Assuming one event inevitably leads to extreme consequences
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">CONDITIONAL REASONING</div>
+<div class="theory-box">
+"If P, then Q" means: P → Q<br>
+Contrapositive (logically equivalent): ¬Q → ¬P<br><br>
+INVALID inferences:<br>
+"Q, therefore P" — Affirming the consequent ✗<br>
+"¬P, therefore ¬Q" — Denying the antecedent ✗<br><br>
+Example: "All doctors studied biology"<br>
+Valid: Not studied biology → not a doctor<br>
+Invalid: Studied biology → is a doctor ✗
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">EXAM TACTICS</div>
+<div class="theory-box">
+100 min / 60 questions = 1 min 40 sec per question.<br>
+Logic questions often take 3–4 min — budget carefully.<br><br>
+Strategy:<br>
+1. Read the QUESTION first (what are they asking?)<br>
+2. Then read the passage/argument<br>
+3. Eliminate clearly wrong answers first<br>
+4. If genuinely unsure: leave blank (0 pts) — do NOT guess (−0.4 pts)<br>
+5. Flag and return if time permits
+</div>
+</div>
+</div>`
+},
+{
+  id:"read", name:"Reading & GK", q:4, color:"#fbbf24",
+  topics:[
+    "Reading comprehension: main idea, inference, supporting detail",
+    "Vocabulary in context: scientific and academic English",
+    "Text cohesion: how ideas connect across a passage",
+    "General scientific knowledge and current events"
+  ],
+  theory:`<div class="theory-wrap">
+<div class="theory-h1">📚 Reading Skills & General Knowledge</div>
+<div class="theory-sub">4 QUESTIONS · LOWEST WEIGHT</div>
+
+<div class="theory-section">
+<div class="theory-h2">READING STRATEGY</div>
+<div class="theory-p">These questions test English comprehension and inference skills, not specific scientific knowledge. The passage contains everything you need — do not rely on outside knowledge.</div>
+<div class="theory-box">
+<strong>Main idea:</strong> What is the passage primarily about? Often stated in the first or last sentence.<br>
+<strong>Inference:</strong> What does the text IMPLY but not directly state? Must be logically supported.<br>
+<strong>Detail:</strong> Locate specific information in the text.<br>
+<strong>Vocabulary in context:</strong> Infer the meaning of an unfamiliar word from surrounding sentences.<br>
+<strong>Text structure:</strong> How are ideas linked? Look for contrast (however, although), cause-effect (therefore, as a result), addition (furthermore, moreover).
+</div>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">SCIENTIFIC ENGLISH — KEY VOCABULARY</div>
+<table class="theory-table">
+<tr><th>Word</th><th>Meaning</th></tr>
+<tr><td>corroborate</td><td>confirm, support</td></tr>
+<tr><td>refute</td><td>disprove, contradict</td></tr>
+<tr><td>postulate</td><td>suggest, propose as a hypothesis</td></tr>
+<tr><td>elucidate</td><td>explain, make clear</td></tr>
+<tr><td>mitigate</td><td>reduce, lessen</td></tr>
+<tr><td>preclude</td><td>prevent, make impossible</td></tr>
+<tr><td>concomitant</td><td>occurring together</td></tr>
+<tr><td>albeit</td><td>although, even though</td></tr>
+<tr><td>insofar as</td><td>to the extent that</td></tr>
+<tr><td>notwithstanding</td><td>despite, in spite of</td></tr>
+</table>
+</div>
+
+<div class="theory-section">
+<div class="theory-h2">PREPARATION</div>
+<div class="theory-p">With only 4 questions, don't over-invest time here. The best preparation is reading scientific articles in English regularly:<br>
+• <a href="https://www.bbc.com/news/science-environment" target="_blank">BBC Science</a><br>
+• <a href="https://www.newscientist.com/" target="_blank">New Scientist</a><br>
+• <a href="https://www.nature.com/news" target="_blank">Nature News</a></div>
+</div>
+</div>`
+}
+];
+
+const SYS = `You are an IMAT tutor helping a student prepare for Italian medical school admissions. Student background: wrote biology (advanced), psychology and advanced mathematics in Finnish matriculation exam. Has dental technician background with anatomy knowledge. Has ADHD — keep explanations short and concrete. IMAT: 60 questions, 100 min, +1.5 for correct, −0.4 for wrong, max 90 points. Subjects: Biology (18q), Chemistry (12q), Physics (8q), Math (6q), Logical Reasoning (10q), Reading (4q). Use English in explanations since the exam is in English. For practice questions: produce exactly IMAT format — 5 options (A–E), one correct. Explain why each wrong answer is wrong. Be direct, no padding.`;
+
+let state = {
+  active:"bio", tab:"theory", checked:{},
+  messages:[{r:"a",t:"Hello! I'm your IMAT tutor. I can explain topics, generate practice questions, or analyse exam technique. What do you want to work on?"}],
+  loading:false, qLoading:false, currentQ:null, answered:false,
+  session:{correct:0,wrong:0}
+};
+
+function loadState(){
+  try{const d=localStorage.getItem("imat_v4");if(d){const p=JSON.parse(d);state.checked=p.checked||{};state.messages=p.messages||state.messages;}}catch{}
+}
+function saveState(){
+  try{localStorage.setItem("imat_v4",JSON.stringify({checked:state.checked,messages:state.messages}));}catch{}
+}
+function getP(id){const s=SUBJECTS.find(x=>x.id===id);const t=s.topics.length;const d=s.topics.filter((_,i)=>state.checked[id+"_"+i]).length;return{d,t,pct:Math.round(d/t*100)};}
+function totalP(){const t=SUBJECTS.reduce((a,s)=>a+s.topics.length,0);const d=SUBJECTS.reduce((a,s)=>a+s.topics.filter((_,i)=>state.checked[s.id+"_"+i]).length,0);return{d,t,pct:Math.round(d/t*100)};}
+function updateHdr(){const p=totalP();document.getElementById("hdr-pct").textContent=p.pct+"%";document.getElementById("hdr-pfill").style.width=p.pct+"%";document.getElementById("hdr-plabel").textContent=p.d+" / "+p.t+" topics";}
+
+function renderSidebar(){
+  const list=document.getElementById("sidebar-list");
+  list.innerHTML=SUBJECTS.map(s=>{const p=getP(s.id);return`<button class="sbt${state.active===s.id?" active":""}" onclick="setSubject('${s.id}')"><div class="sbt-name">${s.name}<span class="sbt-qbadge">${s.q}q</span></div><div class="sbt-bar"><div class="sbt-fill" style="width:${p.pct}%;background:${s.color}"></div></div><div class="sbt-cnt">${p.d}/${p.t}</div></button>`;}).join("");
+}
+
+function renderTabs(){
+  document.querySelectorAll(".tab").forEach((t,i)=>{t.classList.toggle("active",["theory","practice","checklist","tutor"][i]===state.tab);});
+}
+
+function renderContent(){
+  const el=document.getElementById("content");
+  const s=SUBJECTS.find(x=>x.id===state.active);
+  if(state.tab==="theory"){el.innerHTML=s.theory;return;}
+  if(state.tab==="practice"){renderPractice(el,s);return;}
+  if(state.tab==="checklist"){
+    el.innerHTML=`<div class="check-wrap">${s.topics.map((t,i)=>{const done=!!state.checked[s.id+"_"+i];return`<div class="topic-row${done?" done":""}" onclick="toggle('${s.id}',${i})"><div class="cbox${done?" checked":""}">${done?"✓":""}</div><span class="topic-txt">${t}</span></div>`;}).join("")}</div>`;
+    return;
+  }
+  if(state.tab==="tutor"){
+    el.innerHTML=`<div class="tutor-wrap"><div id="msgs">${state.messages.map(m=>`<div class="msg ${m.r==="a"?"assistant":"user"}"><div class="bubble">${escHtml(m.t)}</div></div>`).join("")}${state.loading?'<div class="msg assistant"><div class="bubble" style="color:var(--text3)">Typing...</div></div>':""}</div><div id="msg-input-row"><input id="msg-input" placeholder="Ask a question or request a practice question..." onkeydown="if(event.key==='Enter')sendMsg()"><button id="msg-send" onclick="sendMsg()"${state.loading?" disabled":""}>SEND</button></div></div>`;
+    const msgs=document.getElementById("msgs");if(msgs)msgs.scrollTop=msgs.scrollHeight;
+    return;
+  }
+}
+
+function renderPractice(el,s){
+  const statsHTML=(state.session.correct+state.session.wrong>0)?`<div id="session-stats"><div class="stat-item"><div class="stat-num" style="color:#4ade80">${state.session.correct}</div><div class="stat-lbl">CORRECT</div></div><div class="stat-item"><div class="stat-num" style="color:#f87171">${state.session.wrong}</div><div class="stat-lbl">WRONG</div></div><div class="stat-item"><div class="stat-num">${Math.round(state.session.correct/(state.session.correct+state.session.wrong)*100)}%</div><div class="stat-lbl">ACCURACY</div></div></div>`:"";
+  let qHTML="";
+  if(state.qLoading){qHTML=`<div id="q-loading">Generating question...</div>`;}
+  else if(state.currentQ){qHTML=renderQCard();}
+  el.innerHTML=`<div class="practice-wrap"><div class="pctrl-row"><button class="pctrl-btn primary" onclick="generateQ('${s.id}')">⟳ NEW QUESTION</button><button class="pctrl-btn" onclick="generateQ('${s.id}','hard')">HARD MODE</button><button class="pctrl-btn" onclick="generateQ('all')">MIXED SUBJECTS</button><button class="pctrl-btn" onclick="resetSession()">RESET STATS</button></div>${statsHTML}${qHTML}</div>`;
+}
+
+function renderQCard(){
+  if(!state.currentQ)return"";
+  const q=state.currentQ;
+  const opts=q.options.map((o,i)=>{
+    const letter=["A","B","C","D","E"][i];
+    let cls="opt";
+    if(state.answered){cls+=" locked";if(i===q.correct)cls+=" correct";else if(i===q.chosen)cls+=" wrong";}
+    return`<div class="${cls}" onclick="${state.answered?"":`answer(${i})`}"><span class="opt-letter">${letter}</span><span>${escHtml(o)}</span></div>`;
+  }).join("");
+  const explain=state.answered?`<div id="q-explain">${escHtml(q.explanation)}</div>`:"";
+  const nextBtn=state.answered?`<div style="margin-top:14px"><button class="pctrl-btn primary" onclick="generateQ('${q.subject}')">NEXT QUESTION →</button></div>`:"";
+  return`<div id="q-card"><div id="q-meta">${q.subject.toUpperCase()} · IMAT FORMAT</div><div id="q-text">${escHtml(q.text)}</div>${opts}${explain}${nextBtn}</div>`;
+}
+
+function setSubject(id){state.active=id;render();}
+function setTab(t){state.tab=t;render();}
+function toggle(id,i){const k=id+"_"+i;state.checked[k]=!state.checked[k];saveState();render();}
+function resetSession(){state.session={correct:0,wrong:0};render();}
+
+function answer(i){
+  if(state.answered||!state.currentQ)return;
+  state.answered=true;state.currentQ.chosen=i;
+  if(i===state.currentQ.correct)state.session.correct++;else state.session.wrong++;
+  render();
+}
+
+async function generateQ(subjectId,difficulty){
+  const subj=subjectId==="all"?SUBJECTS[Math.floor(Math.random()*SUBJECTS.length)]:SUBJECTS.find(x=>x.id===subjectId);
+  state.qLoading=true;state.currentQ=null;state.answered=false;render();
+  const prompt=`Generate a ${difficulty==="hard"?"challenging ":""}IMAT-style multiple choice question on: ${subj.name}.
+Respond ONLY with valid JSON (no markdown, no preamble):
+{"text":"question text","options":["option A","option B","option C","option D","option E"],"correct":0,"explanation":"Correct answer is A because... B is wrong because... C is wrong because... D is wrong because... E is wrong because..."}
+correct is the 0-based index of the correct option. Make it genuinely IMAT difficulty.`;
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:SYS,messages:[{role:"user",content:prompt}]})});
+    const data=await res.json();
+    const text=data.content?.find(b=>b.type==="text")?.text||"";
+    const clean=text.replace(/```json|```/g,"").trim();
+    const parsed=JSON.parse(clean);
+    state.currentQ={...parsed,subject:subj.id};
+  }catch{state.currentQ={text:"Error generating question. Try again.",options:["Try again","","","",""],correct:0,explanation:"",subject:subj.id};}
+  state.qLoading=false;render();
+}
+
+async function sendMsg(){
+  const inp=document.getElementById("msg-input");
+  if(!inp||!inp.value.trim()||state.loading)return;
+  const text=inp.value.trim();
+  state.messages.push({r:"u",t:text});state.loading=true;render();
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:SYS,messages:state.messages.map(m=>({role:m.r==="a"?"assistant":"user",content:m.t}))})});
+    const data=await res.json();
+    const reply=data.content?.find(b=>b.type==="text")?.text||"Error.";
+    state.messages.push({r:"a",t:reply});saveState();
+  }catch{state.messages.push({r:"a",t:"Connection error. Try again."});}
+  state.loading=false;render();
+}
+
+function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");}
+function render(){renderSidebar();renderTabs();renderContent();updateHdr();}
+
+loadState();render();
+</script>
+</body>
+</html>
